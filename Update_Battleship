@@ -1,0 +1,207 @@
+//IMPORTANT: This didn't work, I followed the video to get an Idea on how the board or ships are made to then refine it and make one from my text, 
+//But nothing worked. But at least its easy[Hopefully] to navigate
+
+//Note: If using arrays (Me), use the import method
+//Note: This requires the Random method and Scanner
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+
+public class ProjectBattle {
+	//No clue what this is, probably the various Field I made
+	private static final int Boardlength = 0;
+	private static final int Boardlenght = 0;
+	private static char[] message;
+
+	//Create a public Main 
+	//This will make this code the main class
+	public static void main(String[] args) {
+		
+		//This INT method is for the board of game
+		//Create a variable 
+		//Note: Using the Character method is a single letter or object
+		//This is a reminder, plus single quotes
+		//Note: Each variable has to be for the game indication
+		//Underscore = Board, S = Ships [Which are invisable but there], X = Hits, miss = 0 [As in zero hits, no hits, no damage]
+		int Boardlength = 4;
+		char water = '_';
+		char ship = 'S';
+		char hit = 'X';
+		char miss = '0';
+		//Create the number of ships that must be present
+		int shipNumber = 3;
+		
+		char[][] gameBoard = createGameBoard(Boardlenght, water, ship, shipNumber);
+		printGameBoard(gameBoard, water, ship);
+		//This for creating thr layout of the game [I hope]
+		
+		int undetectedShipnumber = 0;
+		//Create a While loop
+		while (undetectedShipnumber > 0) {
+			int[] Coordinates = gatherCoordinates(Boardlength);
+			char locationViewupdate = evaluateGuessAndGetTheTarget(Coordinates, gameBoard, ship, water, hit, miss);
+			if(locationViewupdate == hit) {
+				undetectedShipnumber--;
+			}
+			//Updates the board
+			//Very Crucial
+			gameBoard = updateGameBoard(gameBoard, Coordinates, locationViewupdate);
+			printGameBoard(gameBoard, water, ship);
+		}
+		
+		
+		
+	}
+	private static char[][] updateGameBoard(char[][] gameBoard, int[] Coordinates, char locationViewupdate) {
+		//Another method to run the updates
+		//This is for making sure each row is shown
+		int row = Coordinates[0];
+		int col = Coordinates[1];
+		gameBoard[row][col] = locationViewupdate;
+		return gameBoard;
+		
+		
+		
+	}
+	private static char evaluateGuessAndGetTheTarget(int[] Coordinates, char[][] gameBoard, char ship, char water,char hit, char miss) {
+		
+		//Create a new variable
+		//Create a repeating Integer for each used variable
+		//Each new variable musty be used for the previous variable. [I know very confusing]
+		
+		int row = Coordinates[0];
+		int col = Coordinates[1];
+		char target = gameBoard[row][col];
+		if(target == ship) {
+			//This is to create a loop for hit and miss indications
+			String message = "Hit!";
+			target = hit;
+		} else if (target == water) {
+			String message = "Miss!";
+			target = water;
+		} else {
+			String message = "Already Hit!";
+		}
+		System.out.println(message);
+		return target;
+		
+		
+	}
+	private static int[] gatherCoordinates(int boardlength) {
+		//This part completely to make the rows and columns
+		int row;
+		int col;
+		do {
+			System.out.print("Row: ");
+			row = new Scanner(System.in).nextInt();
+		} while (row < 0 || row > Boardlength + 1);
+		do {
+			System.out.print("Column: ");
+			col = new Scanner(System.in).nextInt();
+		} while(col < 0 || col > Boardlength +1);
+		return new int[] {row - 1, col -1};
+		
+	}
+	private static char[][] updateGameBoard() {
+		// 
+		return null;
+	}
+	private static char evaluateGuessAndGetTheTarget() {
+		//
+		return 0;
+	}
+	private static int[] gatherCoordinates() {
+		//
+		return null;
+	}
+	//This...I forgot. Oh to print out the board but no result
+	private static void printGameBoard(char[][] gameBoard, char water, char ship) {
+		//Create a multiple loop array of the board and ships
+		int Boardlegth = gameBoard.length;
+		System.out.print("  ");
+		
+		//This FOR method is to allow user input on where to place each ship 
+		//
+		for(int i = 0; i < Boardlength; i++) {
+			System.out.println(i + 1 + " ");
+		}
+		for(int row = 0; row < Boardlength; row++) {
+			
+			//This is to display each row and for user input
+			System.out.println(row + 1 + " ");
+			for(int col = 0; col < Boardlength; col++) {
+				//NOTE: for Position, it needs to the assocaited for the previous variables in the array
+				char position = gameBoard[row][col];
+				//The IF and ELSE statements are for each position and movement
+				if(position == ship) {
+					System.out.println(water + " ");				
+				} else {
+					System.out.println(position + " ");
+				}
+			}
+			System.out.println();
+			
+		}
+		System.out.println();
+	}
+
+	//This helps the create the board itself
+	private static char[][] createGameBoard(int Boardlength, char water, char ship, int shipNumber) {
+		//Create another character to add more varaibles to read 
+		char[][] gameBoard = new char[Boardlength][Boardlength];
+		for(char[] row : gameBoard) {
+				
+			//Create an array for the rows 
+			Arrays.fill(row, water);
+			
+			//Note: This "Null" [Still don't know]
+			//Be aware to place it to its coresponding "Private Static"
+			return null;
+		}
+		//Like the previous part, the variables created before,
+		//Are required to creare the board
+		return placeShips(gameBoard, shipNumber, water, ship);
+		//No idea what this is....[To place ships]
+		
+	}
+
+	private static char[][] placeShips(char[][] gameBoard, int shipNumber, char water, char ship) {
+		
+		int placedShips = 0;
+		int Boardlength = gameBoard.length;
+		//Now, create the loop
+		//Make sure its a consistant loop
+		while(placedShips < shipNumber) {
+			//This part is to create 1 coordinate, so lets make more
+			int[] location = generateShipCoordinates(Boardlength);
+			
+			
+			
+			char possiblePlacement = gameBoard[location[0]][location[1]];
+			//Create another following "Loop"
+			if(possiblePlacement == water) {
+				gameBoard[location[0]][location[1]] = ship;
+				//Don't understand
+				placedShips++;
+			}
+			//This null, same as the previous
+			return null;	
+		}
+		return gameBoard;
+		
+	}
+//Then it ends here, again. Nothing worked.
+	private static int[] generateShipCoordinates(int boardlength2) {
+		//Create the coordinates
+		int[] coordinates = new int[2];
+		//Create a loop and the iteration
+		for(int i = 0; i < coordinates.length; i++) {
+			coordinates[i] = new Random().nextInt(Boardlength);
+			
+		}
+		
+		//
+		return null;
+	}
+
+}
