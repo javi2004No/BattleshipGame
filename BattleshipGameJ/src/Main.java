@@ -7,7 +7,9 @@ public class Main {
 		//Initialize the array
 		Test test = new Test();
 		test.testBoard();
-		test.testvariables();
+		//test.testvariables();
+		//test.testAi();
+		//ClickRegistering j = new ClickRegistering();
 	}
 
 }
