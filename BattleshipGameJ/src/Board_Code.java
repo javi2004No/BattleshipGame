@@ -54,74 +54,7 @@ public class Board_Code extends JPanel {
 						//This part changes the size of each white block on the baord
 						g.clearRect(k,  i, 50, 30);
 					}
-				}
-//				
-				//This Clear-rect will start chaging color patterns of the now filled board
-				
-				//Note: The upper part is for the Top board
-//				g.clearRect(150, 50, 50, 50);
-//				g.clearRect(250, 50, 50, 50);
-//				g.clearRect(350, 50, 50, 50);
-//				g.clearRect(450, 50, 50, 50);
-//				g.clearRect(550, 50, 50, 50);
-//				
-//				//This if for the upper Second Row
-//				g.clearRect(200, 100, 50, 50);
-//				g.clearRect(300, 100, 50, 50);
-//				g.clearRect(400, 100, 50, 50);
-//				g.clearRect(500, 100, 50, 50);
-//				g.clearRect(600, 100, 50, 50);
-//				
-//				//This is for the upper Fourth Row
-//				g.clearRect(600, 200, 50, 50);
-//				g.clearRect(500, 200, 50, 50);
-//				g.clearRect(400, 200, 50, 50);
-//				g.clearRect(300, 200, 50, 50);
-//				g.clearRect(200, 200, 50, 50);
-//				
-//				//This is for the upper Fourth Row
-//				g.clearRect(200, 300, 50, 50);
-//				g.clearRect(300, 300, 50, 50);
-//				g.clearRect(400, 300, 50, 50);
-//				g.clearRect(500, 300, 50, 50);
-//				g.clearRect(600, 300, 50, 50);
-//				
-//				//Note: This is for the bottom part of board
-//				//First row
-//				g.clearRect(200, 400, 50, 50);
-//				g.clearRect(300, 400, 50, 50);
-//				g.clearRect(400, 400, 50, 50);
-//				g.clearRect(500, 400, 50, 50);
-//				g.clearRect(600, 400, 50, 50);
-//				
-//				//Third Row
-//				g.clearRect(200, 500, 50, 50);
-//				g.clearRect(300, 500, 50, 50);
-//				g.clearRect(400, 500, 50, 50);
-//				g.clearRect(500, 500, 50, 50);
-//				g.clearRect(600, 500, 50, 50);
-//				
-//				//Fifth row
-//				g.clearRect(200, 600, 50, 50);
-//				g.clearRect(300, 600, 50, 50);
-//				g.clearRect(400, 600, 50, 50);
-//				g.clearRect(500, 600, 50, 50);
-//				g.clearRect(600, 600, 50, 50);
-//				
-//				//Bottom Row
-//				g.clearRect(150, 650, 50, 50);
-//				g.clearRect(250, 650, 50, 50);
-//				g.clearRect(350, 650, 50, 50);
-//				g.clearRect(450, 650, 50, 50);
-//				g.clearRect(550, 650, 50, 50);
-//				
-//				//Extra Layer in the bottom
-//				g.clearRect(200, 700, 50, 50);
-//				g.clearRect(300, 700, 50, 50);
-//				g.clearRect(400, 700, 50, 50);
-//				g.clearRect(500, 700, 50, 50);
-//				g.clearRect(600, 700, 50, 50);
-		
+				}		
 	}
 	
 	

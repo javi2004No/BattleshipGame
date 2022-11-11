@@ -6,9 +6,9 @@ public class Main {
 		// TODO Auto-generated method stub
 		//Initialize the array
 		Test test = new Test();
-		test.testBoard();
+		//test.testBoard();
 		//test.testvariables();
-		//test.testAi();
+		test.testAi();
 		//ClickRegistering j = new ClickRegistering();
 	}
 

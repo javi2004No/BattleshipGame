@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 //This shall be the class where all the AI stuff is stored
 public class Ai {
+	public int boatsLeft;
 	//Initializing the variables I need.
 	//The aiBoard is the board of the ai itself.
 	public ArrayList<PlayerTile> aiBoard;
@@ -42,53 +43,13 @@ public class Ai {
 	public Ai(int level) {
 		aiBoard = new ArrayList<PlayerTile>();
 		aiAttack = new ArrayList<PlayerTile>();
-		String paramanter = "";
-		//This is a nested loop in order to get the correct positions for the board.
-		for(int i = 0; i < 10; i++) {
-			switch(i) {
-				case 0:
-					paramanter = "A";
-					break;
-				case 1:
-					paramanter = "B";
-					break;
-				case 2:
-					paramanter = "C";
-					break;
-				case 3:
-					paramanter = "D";
-					break;
-				case 4:
-					paramanter = "E";
-					break;
-				case 5:
-					paramanter = "F";
-					break;
-				case 6:
-					paramanter = "G";
-					break;
-				case 7:
-					paramanter = "H";
-					break;
-				case 8:
-					paramanter = "I";
-					break;
-				case 9:
-					paramanter = "J";
-					break;
-			}
-			String holder = paramanter;
-			for(int i2 = 0; i2 < 10; i2++) {
-				paramanter += (i2+1);
-				//Adds the tiles for the AI boards
-				aiBoard.add(new PlayerTile(paramanter));
-				aiAttack.add(new PlayerTile(paramanter));
-				paramanter= holder; 
-			}
-		}
+		PlayerTile holder = new PlayerTile("");
+		holder.createBoard(aiBoard);
+		holder.createBoard(aiAttack);
 		Level = level;
 		//Calls the function to create the AI's ships.
 		createShips();
+		boatsLeft = 5;
 	}
 	
 	//This function places the AI's ship in a random tile and direction.
@@ -99,15 +60,14 @@ public class Ai {
 		int number;
 		int currentShip = 5;
 		boolean found;
-		
 		//It will continue until the break command is called.
-		
 		while(true) {
 			found = false;
 			//Picks random number from 0-100.
 			number = random.nextInt(100);
 			//First check
 			if(aiBoard.get(number).Ship == 0) {
+				//Calls the function based on what ship it has.
 				switch(currentShip) {
 				case 5:
 					holder = ship(5,number);
@@ -127,6 +87,8 @@ public class Ai {
 					found = true;
 				}
 			}
+			//When it finds sutible locations for the ship it will than pick a random location
+			//and set that location as where the ship is.
 			if(found) {
 				int newNum = random.nextInt(holder.size());
 				int  nnum = aiBoard.indexOf(holder.get(newNum));
@@ -163,10 +125,13 @@ public class Ai {
 	//1 left.
 	//2 up.
 	//3 down.
+	//Return all possible permutations of directions the boats can fit in.
 	private ArrayList<PlayerTile> ship(int numberofTiles, int starter) {
+		//gets the index number of the position
 		int letter = starter/10;
 		ArrayList<PlayerTile> holder = new ArrayList<PlayerTile>();
 		System.out.println(letter + " " + starter + " " + aiBoard.get(starter).Position);
+		//Adds any direction that fits to the holder list.
 		for(int i = 0; i < 4; i++) {
 			if(checkCells(numberofTiles,i,starter,aiBoard)) {
 				System.out.println(i + " Fits");
@@ -223,6 +188,7 @@ public class Ai {
 				break;
 		}
 		//it than has three checks to make sure the cell is valid.
+		//it repeats these checks for however long the check needs to be.
 		for(int i = 0; i < numberOfCells; i++) {
 			//The first check is to make sure the cell exists since there are only cells from
 			// 0 - 99.
@@ -237,7 +203,6 @@ public class Ai {
 			}
 			//The final check is to make sure that the cell we have is empty.
 			if(array.get(number).Ship == 0) {
-				
 				previous = number;
 				number+=step;
 			}else {
