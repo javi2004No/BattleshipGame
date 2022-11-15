@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Test {
 	//this is simply a test that all the variables have been created in an array and
@@ -63,14 +65,64 @@ public class Test {
 	public void testAi() {
 		//The AI class is being called here
 		//The number in the parentheses repersents its level I want to make diffrent AI with diffrent level of diffuculty to them.
-		Ai ai1 = new Ai(1);
+		Ai jeff = new Ai(1);
+		Ai bob = new Ai(1);
+		Scanner obj = new Scanner(System.in);
 		//Very simple just looks for and prints out where the AI ships are.
-		for(int i = 5; i > 0; i--) {
-			System.out.println("Ship " + i);
-			for(int d = 0; d < ai1.aiBoard.size(); d++) {
-				if(ai1.aiBoard.get(d).Ship == i) {
-					System.out.println(ai1.aiBoard.get(d).Position);
+//		for(int i = 5; i > 0; i--) {
+//			System.out.println("Ship " + i);
+//			for(int d = 0; d < jeff.aiBoard.size(); d++) {
+//				if(jeff.aiBoard.get(d).Ship == i) {
+//					System.out.println(jeff.aiBoard.get(d).Position);
+//				}
+//			}
+//		}
+//		System.out.println("Next 100 are attacks");
+//		String Attack;
+//		while(jeff.aiAttack.size() > 0) {
+//			Attack = jeff.action();
+//			System.out.println(Attack);
+//			jeff.cleanup(Attack, false,true);
+//		}
+//		System.out.println("Done");
+		System.out.println("Welcome to the Ai Battleship");
+		System.out.println("Click enter to continue, n to quit");
+		String answer;
+		String Attack;
+		Game game = new Game();
+		int result;
+		int turn = 0;
+		while(true) {
+			answer = obj.next();
+			if(answer.equalsIgnoreCase("n")) {
+				break;
+			}
+			if(turn == 0) {
+				Attack = jeff.action();
+				System.out.println("Jeff attacks: " + Attack);
+				result = game.play(Attack, bob.aiBoard,0);
+				if(result == 1) {
+					System.out.println("Jeff Hits");
+				}else if (result == 0) {
+					System.out.println("Jeff Misses");
+				}else {
+					System.out.println("Jeff Sinks Bobs " + bob.aiBoard.get(bob.findPos(Attack, bob.aiBoard)).getShip());
 				}
+				jeff.cleanup(Attack, false, false);
+				turn++;
+			}else {
+				Attack = bob.action();
+				System.out.println("Bob attacks: " + Attack);
+				result = game.play(Attack, jeff.aiBoard,1);
+				if(result == 1) {
+					System.out.println("Bob Hits");
+				}else if(result == 0){
+					System.out.println("Bob Misses");
+				}else {
+					System.out.println("Bob Sinks Jeffs " + jeff.aiBoard.get(jeff.findPos(Attack, jeff.aiBoard)).getShip());
+				}
+				bob.cleanup(Attack, false, false);
+				turn--;
 			}
 		}
 	}

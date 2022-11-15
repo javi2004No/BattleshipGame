@@ -12,6 +12,7 @@ public class PlayerTile {
 	public int Ship;
 	public boolean BeenHit;
 	public double chance;
+	public int shipleft;
 	//Sets everything to its defualt and takes the position from the function.
 	public PlayerTile(String position) {
 		Position = position;
@@ -51,6 +52,43 @@ public class PlayerTile {
 			break;
 		case "J":
 			output = 9;
+			break;
+		}
+		return output;
+	}
+	
+	public String transformIntToLetter(int input) {
+		String output = "";
+		switch(input) {
+		case 0:
+			output = "A";
+			break;
+		case 1:
+			output = "B";
+			break;
+		case 2:
+			output = "C";
+			break;
+		case 3:
+			output = "D";
+			break;
+		case 4:
+			output = "E";
+			break;
+		case 5:
+			output = "F";
+			break;
+		case 6:
+			output = "G";
+			break;
+		case 7:
+			output = "H";
+			break;
+		case 8:
+			output = "I";
+			break;
+		case 9:
+			output = "J";
 			break;
 		}
 		return output;
