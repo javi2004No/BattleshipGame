@@ -6,6 +6,16 @@ public class Game {
 	ArrayList<ArrayList<PlayerTile>> player2;
 	int player1boats;
 	int player2boats;
+	//Allright for this class here all you need to know is that when you know what a player
+	//wants to do you call this specific function here called "play".
+	//All you need to give the function is the position on where the player wants to attack.
+	// The board of the other player.
+	// and what the number of the defending player is either 1 or 2.
+	//This function will give back 4 diffrent options depending on the integer.
+	//0 means miss.
+	//1 means hit.
+	//2 means hit and sunk.
+	//3 means hit, sunk, and won the game.
 	public int play(String action, ArrayList<PlayerTile> defender, int player) {
 		int result = 0;
 		Ai hold = new Ai(0);
@@ -22,9 +32,12 @@ public class Game {
 					if(player1.get(num2).size() >= shipSize(defender.get(num).Ship)) {
 						result = 2;
 						player1boats--;
+						if(player1boats == 0) {
+							result = 3;
+						}
 					}
 				}
-			}else {
+			}else if(player == 2){
 				int num2 = findPos(defender.get(num).Ship,player2);
 				if(num2 == -1) {
 					player2.add(new ArrayList<PlayerTile>());
@@ -35,6 +48,9 @@ public class Game {
 					if(player2.get(num2).size() >= shipSize(defender.get(num).Ship)) {
 						result = 2;
 						player2boats--;
+						if(player2boats == 0) {
+							result = 3;
+						}
 					}
 				}
 			}

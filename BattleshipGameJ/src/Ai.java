@@ -17,6 +17,8 @@ public class Ai {
 	public int lowestBoat;
 	//Holds the pos for a function;
 	private String PosHolder;
+	//Hold the direction the Ai is currentlt going in.
+	private ArrayList<Integer> directions;
 	//This is the main function that is called when you want the Ai to do something.
 	//It will return a string which will be the position of th attack. Eg: F1 or G7.
 	public String action() {
@@ -30,19 +32,26 @@ public class Ai {
 	}
 	
 	public void cleanup(String action, boolean hit, boolean sunk) {
+		System.out.println(hit);
 		if(hit) {
 			record.add(aiAttack.get(findPos(action,aiAttack)));
+			record.get(record.size() - 1).BeenHit = true;
+			System.out.println("I am here");
 		}else {
+			System.out.println("No here");
 			if(record.size() > 0) {
+				System.out.println("Right here");
 				if(sunk) {
 					for(int i = 0; i < record.size(); i++) {
 						aiAttack.remove(findPos(record.get(i).Position,aiAttack));
 					}
 					record.clear();
+					directions.clear();
 				}else {
-					
+					record.add(aiAttack.get(findPos(action,aiAttack)));
 				}
 			}else {
+				System.out.println("why am i here");
 				aiAttack.remove(findPos(action,aiAttack));
 			}
 		}
@@ -56,13 +65,81 @@ public class Ai {
 	private String EasyAi() {
 		Random random = new Random();
 		String action = "";
+		ArrayList<Integer> holderint = new ArrayList<Integer>();
 		ArrayList<PlayerTile> holder = new ArrayList<PlayerTile>();
+		PlayerTile holder2 = new PlayerTile("");
 		if(record.size() == 1) {
 			for(int i = 0; i < 4; i++) {
 				if(checkCells(lowestBoat,i,findPos(record.get(0).Position,aiAttack),aiAttack,false)) {
 					//System.out.println(PosHolder);
 					holder.add(aiAttack.get(findPos(PosHolder,aiAttack)));
+					directions.add(i);
+				}else {
+					holderint.add(i);
 				}
+			}
+			int num = random.nextInt(holder.size());
+			action = holder.get(num).Position;
+			num = directions.get(num);
+			directions.clear();
+			directions.addAll(holderint);
+			directions.add(num);
+		}else if(record.size() > 1) {
+			int num = record.size() - 1;
+			if(record.get(num).BeenHit) {
+				String letter1 = record.get(num).Position.substring(0,1);
+				int num1 = Integer.parseInt(record.get(num).Position.substring(1));
+				int k;
+				switch(directions.get(directions.size()-1)) {
+					case 0:
+						num1++;
+						break;
+					case 1:
+						num1--;
+						break;
+					case 2:
+						k = holder2.transformPosition(letter1);
+						k--;
+						letter1 = holder2.transformIntToLetter(k);
+						break;
+					case 3:
+						k = holder2.transformPosition(letter1);
+						k++;
+						letter1 = holder2.transformIntToLetter(k);
+						break;
+				}
+				//System.out.println(record);
+				action = aiAttack.get(findPos((letter1 + num1),aiAttack)).Position;
+			}else{
+				for(int i = 0; i < 4; i++) {
+					if(findint(i,directions) != -1) {
+						holderint.add(i);
+					}
+				}
+				directions.add(holderint.get(random.nextInt(holderint.size())));
+				String letter1 = record.get(0).Position.substring(0,1);
+				int num1 = Integer.parseInt(record.get(0).Position.substring(1));
+				int k;
+				switch(directions.get(directions.size()-1)) {
+					case 0:
+						num1++;
+						break;
+					case 1:
+						num1--;
+						break;
+					case 2:
+						k = holder2.transformPosition(letter1);
+						k--;
+						letter1 = holder2.transformIntToLetter(k);
+						break;
+					case 3:
+						k = holder2.transformPosition(letter1);
+						k++;
+						letter1 = holder2.transformIntToLetter(k);
+						break;
+				}
+				//System.out.println(record);
+				action = aiAttack.get(findPos((letter1 + num1),aiAttack)).Position;
 			}
 		}else{
 			int num = random.nextInt(aiAttack.size());
@@ -85,6 +162,7 @@ public class Ai {
 		record = new ArrayList<PlayerTile>();
 		lowestBoat = 2;
 		PosHolder = "";
+		directions = new ArrayList<Integer>();
 	}
 	
 	//This function places the AI's ship in a random tile and direction.
@@ -285,6 +363,14 @@ public class Ai {
 		return done;
 	}
 	
+	private int findint(int inte, ArrayList<Integer> array) {
+		for(int i = 0; i < array.size(); i++) {
+			if(array.get(i).equals(inte)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	public int findPos(String pos, ArrayList<PlayerTile> board) {
 		for(int i = 0; i < board.size(); i++) {
 			if(board.get(i).Position.equals(pos)) {

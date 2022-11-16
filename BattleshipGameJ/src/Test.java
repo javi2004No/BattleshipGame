@@ -62,7 +62,7 @@ public class Test {
 	}
 	
 	//This function will simply create the ai and than tell us its ships.
-	public void testAi() {
+	public int testAi() {
 		//The AI class is being called here
 		//The number in the parentheses repersents its level I want to make diffrent AI with diffrent level of diffuculty to them.
 		Ai jeff = new Ai(1);
@@ -85,46 +85,77 @@ public class Test {
 //			jeff.cleanup(Attack, false,true);
 //		}
 //		System.out.println("Done");
-		System.out.println("Welcome to the Ai Battleship");
-		System.out.println("Click enter to continue, n to quit");
+		//System.out.println("Welcome to the Ai Battleship");
+		//System.out.println("Click enter to continue, n to quit");
 		String answer;
 		String Attack;
 		Game game = new Game();
 		int result;
 		int turn = 0;
+		int totalturns = 0;
 		while(true) {
-			answer = obj.next();
-			if(answer.equalsIgnoreCase("n")) {
-				break;
-			}
+//			answer = obj.next();
+//			if(answer.equalsIgnoreCase("n")) {
+//				break;
+//			}
 			if(turn == 0) {
+				System.out.println("Jeff");
 				Attack = jeff.action();
-				System.out.println("Jeff attacks: " + Attack);
+				//System.out.println("Jeff attacks: " + Attack);
 				result = game.play(Attack, bob.aiBoard,0);
-				if(result == 1) {
-					System.out.println("Jeff Hits");
-				}else if (result == 0) {
-					System.out.println("Jeff Misses");
-				}else {
-					System.out.println("Jeff Sinks Bobs " + bob.aiBoard.get(bob.findPos(Attack, bob.aiBoard)).getShip());
+				switch(result) {
+					case 0:
+//						System.out.println("Jeff Misses");
+						jeff.cleanup(Attack, false, false);
+						break;
+					case 1:
+//						System.out.println("Jeff Hits");
+						jeff.cleanup(Attack, true, false);
+						break;
+					case 2:
+					case 3:
+//						System.out.println("Jeff Sinks Bobs " + bob.aiBoard.get(bob.findPos(Attack, bob.aiBoard)).getShip());
+						jeff.cleanup(Attack, true, true);
+						break;
 				}
-				jeff.cleanup(Attack, false, false);
+				if(result == 3) {
+				//	System.out.println("Jeff wins the Game!");
+					break;
+				}
+//				jeff.cleanup(Attack, false, false);
 				turn++;
 			}else {
+				System.out.println("Bob");
 				Attack = bob.action();
-				System.out.println("Bob attacks: " + Attack);
+				//System.out.println("Bob attacks: " + Attack);
 				result = game.play(Attack, jeff.aiBoard,1);
-				if(result == 1) {
-					System.out.println("Bob Hits");
-				}else if(result == 0){
-					System.out.println("Bob Misses");
-				}else {
-					System.out.println("Bob Sinks Jeffs " + jeff.aiBoard.get(jeff.findPos(Attack, jeff.aiBoard)).getShip());
+				switch(result) {
+					case 0:
+//						System.out.println("Bob Misses");
+						bob.cleanup(Attack, false, false);
+						break;
+					case 1:
+//						System.out.println("Bob Hits");
+						bob.cleanup(Attack, true, false);
+						break;
+					case 2:
+					case 3:
+//						System.out.println("Bob Sinks Jeffs " + jeff.aiBoard.get(jeff.findPos(Attack, jeff.aiBoard)).getShip());
+						bob.cleanup(Attack, true, true);
+						break;
 				}
-				bob.cleanup(Attack, false, false);
+				if(result == 3) {
+					//System.out.println("Bob wins the Game!");
+					break;
+				}
+//				bob.cleanup(Attack, false, false);
 				turn--;
 			}
+			totalturns++;
 		}
+		
+		//System.out.println("It took " + totalturns + " turns!");
+		return totalturns;
 	}
 	//This code calls the drawboard function which draws the board Rhodas is in charge of that.
 	public void testBoard() {

@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class PlayerTile {
 	//The variables of all the tiles
+	//The position stored as a string for example "F1" or "G4".
 	public String Position;
 	//0 no ship
 	//1 2-space ship(destroyer)
@@ -10,9 +11,10 @@ public class PlayerTile {
 	//4 4-space ship(battleship)
 	//5 5-space ship(aircraft-carrier)
 	public int Ship;
+	//If the tile has been hit or not
 	public boolean BeenHit;
+	//This is for the AI you dont need to worry about this.
 	public double chance;
-	public int shipleft;
 	//Sets everything to its defualt and takes the position from the function.
 	public PlayerTile(String position) {
 		Position = position;
@@ -57,6 +59,7 @@ public class PlayerTile {
 		return output;
 	}
 	
+	//Transforms a specific index number to its corresponding letter.
 	public String transformIntToLetter(int input) {
 		String output = "";
 		switch(input) {
@@ -93,6 +96,7 @@ public class PlayerTile {
 		}
 		return output;
 	}
+	
 	//Gets the name of the ship of the current tile.
 	public String getShip() {
 		String shipName;
