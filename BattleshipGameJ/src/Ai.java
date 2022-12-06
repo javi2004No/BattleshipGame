@@ -12,15 +12,24 @@ public class Ai {
 	//Lastly the level variable represents the current level this ai is on.
 	public int Level;
 	//Gives me a a short record of past position that I have hit. 
-	public ArrayList<PlayerTile> record;
+	//private ArrayList<PlayerTile> record;
 	//The lowest boat that the enimie could have.
 	public int lowestBoat;
 	//Holds the pos for a function;
 	private String PosHolder;
 	//Hold the direction the Ai is currentlt going in.
-	private ArrayList<Integer> directions;
+	//private ArrayList<Integer> directions;
 	//This is the main function that is called when you want the Ai to do something.
-	//It will return a string which will be the position of th attack. Eg: F1 or G7.
+	//It will return a string which will be the position of the attack. Eg: F1 or G7.
+	private boolean switchedDirections;
+	private ArrayList<ArrayList<PlayerTile>> hello;
+	private ArrayList<Boolean> morethanonespace;
+	private boolean attackedOnce;
+	private int indexofAttack;
+	private ArrayList<ArrayList<PlayerTile>> memory;
+	private ArrayList<ArrayList<Integer>> directionmem;
+	private String name;
+	private String actttion;
 	public String action() {
 		String action = "";
 		switch(Level) {
@@ -31,30 +40,287 @@ public class Ai {
 		return action;
 	}
 	
-	public void cleanup(String action, boolean hit, boolean sunk) {
-		System.out.println(hit);
+	public void cleanup(String action, boolean hit, boolean sunk, int shipSunk) {
+		Random rand = new Random();
+		actttion = action;
 		if(hit) {
-			record.add(aiAttack.get(findPos(action,aiAttack)));
-			record.get(record.size() - 1).BeenHit = true;
-			System.out.println("I am here");
-		}else {
-			System.out.println("No here");
-			if(record.size() > 0) {
-				System.out.println("Right here");
-				if(sunk) {
-					for(int i = 0; i < record.size(); i++) {
-						aiAttack.remove(findPos(record.get(i).Position,aiAttack));
+				if(memory.size() < 1) {
+					memory.add(new ArrayList<PlayerTile>());
+					directionmem.add(new ArrayList<Integer> ());
+					indexofAttack = 0;
+					memory.get(indexofAttack).add(aiAttack.get(findPos(action,aiAttack)));
+					memory.get(indexofAttack).get(memory.get(indexofAttack).size() - 1).Ship = shipSunk;
+					morethanonespace.add(false);
+				}else if(memory.get(indexofAttack).get(0).Ship != shipSunk){
+//					System.out.println(name);
+//					System.out.println("ShipHit");
+//					System.out.println(shipSunk);
+//					System.out.println("Mem");
+//					System.out.println(memory.get(indexofAttack).get(0).Ship);
+					boolean found = false;
+					int index = -1;
+					for (int i = 0; i < memory.size(); i++) {
+						if(memory.get(i).get(0).Ship == shipSunk) {
+							found = true;
+							index = i;
+							break;
+						}
 					}
-					record.clear();
-					directions.clear();
+					if(!found) {
+						memory.add(new ArrayList<PlayerTile>());
+						memory.get(memory.size() -1).add(aiAttack.get(findPos(action,aiAttack)));
+						memory.get(memory.size()- 1).get(memory.get(memory.size() - 1).size() - 1).Ship = shipSunk;
+						directionmem.add(new ArrayList<Integer> ());
+						morethanonespace.add(false);
+					}else {
+						memory.get(index).add(aiAttack.get(findPos(action,aiAttack)));
+						memory.get(index).get(memory.get(index).size() - 1).Ship = shipSunk;
+						if(memory.get(index).size() == 2) {
+							int letternum1 = memory.get(index).get(0).transformPosition(memory.get(index).get(0).Position.substring(0,1));
+							int numnum1 = Integer.parseInt(memory.get(index).get(0).Position.substring(1));
+							int letternum2 = memory.get(index).get(0).transformPosition(memory.get(index).get(1).Position.substring(0,1));
+							int numnum2 = Integer.parseInt(memory.get(index).get(1).Position.substring(1));
+							if(letternum1 != letternum2) {
+								if(letternum1 > letternum2) {
+									directionmem.get(index).add(2);
+								}else {
+									directionmem.get(index).add(3);
+								}
+							}else if(numnum1 != numnum2) {
+								if(numnum1 > numnum2) {
+									directionmem.get(index).add(0);
+								}else {
+									directionmem.get(index).add(1);
+								}
+							}
+							morethanonespace.set(index, true) ;
+						}
+					}
+					switchdirections();
 				}else {
-					record.add(aiAttack.get(findPos(action,aiAttack)));
+					memory.get(indexofAttack).add(aiAttack.get(findPos(action,aiAttack)));
+					memory.get(indexofAttack).get(memory.get(indexofAttack).size() - 1).Ship = shipSunk;
 				}
+			
+			if(sunk) {
+				if(shipSunk == memory.get(indexofAttack).get(0).Ship) {
+					for(int i = 0; i < memory.get(indexofAttack).size(); i++) {
+						aiAttack.remove(findPos(memory.get(indexofAttack).get(i).Position,aiAttack));
+					}
+					hello.add(memory.get(indexofAttack));
+					memory.remove(indexofAttack);
+					directionmem.remove(indexofAttack);
+					morethanonespace.remove(indexofAttack);
+					if(memory.size() < 1) {
+						indexofAttack = -1;
+					}else {
+						indexofAttack = rand.nextInt(memory.size());
+					}
+					attackedOnce = false;
+				}else {
+					int index = -1;
+					for (int i = 0; i < memory.size(); i++) {
+						if(memory.get(i).get(0).Ship == shipSunk) {
+							index = i;
+							break;
+						}
+					}
+					for(int i = 0; i < memory.get(index).size(); i++) {
+						aiAttack.remove(findPos(memory.get(index).get(i).Position,aiAttack));
+					}
+					hello.add(memory.get(index));
+					memory.remove(index);
+					directionmem.remove(index);
+				}
+			}
+		}else {
+			if(memory.size() > 0 && indexofAttack >= 0) {
+				switchdirections();
+			}else if(memory.size() > 0){
+				System.out.println("This should not be possible");
 			}else {
-				System.out.println("why am i here");
 				aiAttack.remove(findPos(action,aiAttack));
 			}
 		}
+		
+		
+//		System.out.println(hit);
+//		PlayerTile holder = new PlayerTile("");
+//		if(hit) {
+//			record.add(aiAttack.get(findPos(action,aiAttack)));
+//			record.get(record.size() - 1).BeenHit = true;
+//			System.out.println("I am here");
+//			if(sunk) {
+//				if(holder.GetSize(shipSunk) == record.size()) {
+//					for(int i = 0; i < record.size(); i++) {
+//						aiAttack.remove(findPos(record.get(i).Position,aiAttack));
+//					}
+//					record.clear();
+//					directions.clear();
+//					atteckedonce = false;
+//				}else {
+//					switch(directions.get(directions.size()-1)) {
+//						case 0:
+//							if(!directions.contains(1)) {
+//								directions.add(1);
+//							}else if(!directions.contains(2)) {
+//								directions.add(2);
+//							}else if(!directions.contains(3)) {
+//								directions.add(3);
+//							}else {
+//								System.out.println("The impossible is possible.");
+//							}
+//							break;
+//						case 1:
+//							if(!directions.contains(0)) {
+//								directions.add(0);
+//							}else if(!directions.contains(3)) {
+//								directions.add(3);
+//							}else if(!directions.contains(2)) {
+//								directions.add(2);
+//							}else {
+//								System.out.println("The impossible is possible.");
+//							}
+//							break;
+//						case 2:
+//							if(!directions.contains(3)) {
+//								directions.add(3);
+//							}else if(!directions.contains(0)) {
+//								directions.add(0);
+//							}else if(!directions.contains(1)) {
+//								directions.add(1);
+//							}else {
+//								System.out.println("The impossible is possible.");
+//							}
+//							break;
+//						case 3:
+//							if(!directions.contains(2)) {
+//								directions.add(2);
+//							}else if(!directions.contains(1)) {
+//								directions.add(1);
+//							}else if(!directions.contains(0)) {
+//								directions.add(0);
+//							}else {
+//								System.out.println("The impossible is possible.");
+//							}
+//							break;
+//					}
+//					switchedDirections = true;
+//					for(int i = record.size() - holder.GetSize(shipSunk); i < record.size(); i++) {
+//						aiAttack.remove(findPos(record.get(i).Position,aiAttack));
+//					}
+//					for(int i = 0; i < holder.GetSize(shipSunk); i++) {
+//						record.remove(record.size()-1);
+//					}
+//				}
+//			}
+//		}else {
+//			System.out.println("No here");
+//			if(record.size() > 0) {
+//				System.out.println("Right here");
+//				aiAttack.remove(findPos(action,aiAttack));
+//				switch(directions.get(directions.size()-1)) {
+//				case 0:
+//					if(!directions.contains(1)) {
+//						directions.add(1);
+//					}else if(!directions.contains(2)) {
+//						directions.add(2);
+//					}else if(!directions.contains(3)){
+//						directions.add(3);
+//					}else {
+//						System.out.println("The impossible is possible.");
+//					}
+//					break;
+//				case 1:
+//					if(!directions.contains(0)) {
+//						directions.add(0);
+//					}else if(!directions.contains(3)) {
+//						directions.add(3);
+//					}else if(!directions.contains(2)){
+//						directions.add(2);
+//					}else {
+//						System.out.println("The impossible is possible.");
+//					}
+//					break;
+//				case 2:
+//					if(!directions.contains(3)) {
+//						directions.add(3);
+//					}else if(!directions.contains(0)) {
+//						directions.add(0);
+//					}else if(!directions.contains(1)){
+//						directions.add(1);
+//					}else {
+//						System.out.println("The impossible is possible.");
+//					}
+//					break;
+//				case 3:
+//					if(!directions.contains(2)) {
+//						directions.add(2);
+//					}else if(!directions.contains(1)) {
+//						directions.add(1);
+//					}else if(!directions.contains(0)){
+//						directions.add(0);
+//					}else {
+//						System.out.println("The impossible is possible.");
+//					}
+//					break;
+//			}
+//			switchedDirections = true;
+//			}else {
+//				System.out.println("why am i here");
+//				aiAttack.remove(findPos(action,aiAttack));
+//			}
+//		}
+	}
+	
+	private void switchdirections() {
+			switch(directionmem.get(indexofAttack).get(directionmem.get(indexofAttack).size() - 1)) {
+			case 0:
+				if(!directionmem.get(indexofAttack).contains(1)) {
+					directionmem.get(indexofAttack).add(1);
+				}else if(!directionmem.get(indexofAttack).contains(2)) {
+					directionmem.get(indexofAttack).add(2);
+				}else if(!directionmem.get(indexofAttack).contains(3)) {
+					directionmem.get(indexofAttack).add(3);
+				}else {
+					System.out.println("The impossible is possible.");
+				}
+				break;
+			case 1:
+				if(!directionmem.get(indexofAttack).contains(0)) {
+					directionmem.get(indexofAttack).add(0);
+				}else if(!directionmem.get(indexofAttack).contains(3)) {
+					directionmem.get(indexofAttack).add(3);
+				}else if(!directionmem.get(indexofAttack).contains(2)) {
+					directionmem.get(indexofAttack).add(2);
+				}else {
+					System.out.println("The impossible is possible.");
+				}
+				break;
+			case 2:
+				if(!directionmem.get(indexofAttack).contains(3)) {
+					directionmem.get(indexofAttack).add(3);
+				}else if(!directionmem.get(indexofAttack).contains(0)) {
+					directionmem.get(indexofAttack).add(0);
+				}else if(!directionmem.get(indexofAttack).contains(1)) {
+					directionmem.get(indexofAttack).add(1);
+				}else {
+					System.out.println("The impossible is possible.");
+				}
+				break;
+			case 3:
+				if(!directionmem.get(indexofAttack).contains(2)) {
+					directionmem.get(indexofAttack).add(2);
+				}else if(!directionmem.get(indexofAttack).contains(1)) {
+					directionmem.get(indexofAttack).add(1);
+				}else if(!directionmem.get(indexofAttack).contains(0)) {
+					directionmem.get(indexofAttack).add(0);
+				}else {
+					System.out.println("The impossible is possible.");
+				}
+				break;
+		}
+		switchedDirections = true;
 	}
 	
 	//This function here repersents the algorithim for the easy AI.
@@ -68,79 +334,138 @@ public class Ai {
 		ArrayList<Integer> holderint = new ArrayList<Integer>();
 		ArrayList<PlayerTile> holder = new ArrayList<PlayerTile>();
 		PlayerTile holder2 = new PlayerTile("");
-		if(record.size() == 1) {
+		int SIZE = 0;
+		if(indexofAttack >= 0) {
+			SIZE = memory.get(indexofAttack).size();
+		}
+	if(SIZE == 1 && !attackedOnce) {
 			for(int i = 0; i < 4; i++) {
-				if(checkCells(lowestBoat,i,findPos(record.get(0).Position,aiAttack),aiAttack,false)) {
+				if(checkCells(2,i,findPos(memory.get(indexofAttack).get(0).Position,aiAttack),aiAttack,false)) {
 					//System.out.println(PosHolder);
 					holder.add(aiAttack.get(findPos(PosHolder,aiAttack)));
-					directions.add(i);
+					directionmem.get(indexofAttack).add(i);
 				}else {
 					holderint.add(i);
 				}
 			}
 			int num = random.nextInt(holder.size());
 			action = holder.get(num).Position;
-			num = directions.get(num);
-			directions.clear();
-			directions.addAll(holderint);
-			directions.add(num);
-		}else if(record.size() > 1) {
-			int num = record.size() - 1;
-			if(record.get(num).BeenHit) {
-				String letter1 = record.get(num).Position.substring(0,1);
-				int num1 = Integer.parseInt(record.get(num).Position.substring(1));
-				int k;
-				switch(directions.get(directions.size()-1)) {
+			num = directionmem.get(indexofAttack).get(num);
+			directionmem.get(indexofAttack).clear();
+			directionmem.get(indexofAttack).addAll(holderint);
+			directionmem.get(indexofAttack).add(num);
+			attackedOnce = true;
+		}else if(SIZE > 0) {
+			
+			int num = Integer.parseInt(memory.get(indexofAttack).get(memory.get(indexofAttack).size() - 1).Position.substring(1));
+			int letnum = holder2.transformPosition(memory.get(indexofAttack).get(memory.get(indexofAttack).size()-1).Position.substring(0,1));
+			int numst = Integer.parseInt(memory.get(indexofAttack).get(0).Position.substring(1));
+			int letnumst = holder2.transformPosition(memory.get(indexofAttack).get(0).Position.substring(0,1));
+			boolean found = false;
+			do {
+				int numh;
+				int letnumh;
+				if(switchedDirections || morethanonespace.get(indexofAttack)) {
+					numh = numst;
+					letnumh = letnumst;
+					 morethanonespace.set(indexofAttack, false);
+				}else {
+					numh = num;
+					letnumh = letnum;
+				}
+				switch(directionmem.get(indexofAttack).get(directionmem.get(indexofAttack).size() -1 )) {
 					case 0:
-						num1++;
+						numh++;
 						break;
 					case 1:
-						num1--;
+						numh--;
 						break;
 					case 2:
-						k = holder2.transformPosition(letter1);
-						k--;
-						letter1 = holder2.transformIntToLetter(k);
+						letnumh--;
 						break;
 					case 3:
-						k = holder2.transformPosition(letter1);
-						k++;
-						letter1 = holder2.transformIntToLetter(k);
+						letnumh++;
 						break;
 				}
-				//System.out.println(record);
-				action = aiAttack.get(findPos((letter1 + num1),aiAttack)).Position;
-			}else{
-				for(int i = 0; i < 4; i++) {
-					if(findint(i,directions) != -1) {
-						holderint.add(i);
+				if(findPos(holder2.transformIntToLetter(letnumh) + numh, memory.get(indexofAttack)) == -1) {
+					if(findPos(holder2.transformIntToLetter(letnumh) + numh, aiAttack) != -1) {
+						num = numh;
+						letnum = letnumh;
+						found = true;
+					}else {
+							switchdirections();	
+					}
+				}else{
+					if(switchedDirections) {
+						numst = numh;
+						letnumst = letnumh;
+					}else {
+						num = numh;
+						letnum = letnumh;	
 					}
 				}
-				directions.add(holderint.get(random.nextInt(holderint.size())));
-				String letter1 = record.get(0).Position.substring(0,1);
-				int num1 = Integer.parseInt(record.get(0).Position.substring(1));
-				int k;
-				switch(directions.get(directions.size()-1)) {
-					case 0:
-						num1++;
-						break;
-					case 1:
-						num1--;
-						break;
-					case 2:
-						k = holder2.transformPosition(letter1);
-						k--;
-						letter1 = holder2.transformIntToLetter(k);
-						break;
-					case 3:
-						k = holder2.transformPosition(letter1);
-						k++;
-						letter1 = holder2.transformIntToLetter(k);
-						break;
-				}
-				//System.out.println(record);
-				action = aiAttack.get(findPos((letter1 + num1),aiAttack)).Position;
-			}
+				//System.out.println("Stuck?");
+			} while(!found);
+			switchedDirections = false;
+			action = aiAttack.get(findPos(holder2.transformIntToLetter(letnum) + num, aiAttack)).Position;			
+//			int num = record.size() - 1;
+//			if(record.get(num).BeenHit) {
+//				String letter1 = record.get(num).Position.substring(0,1);
+//				int num1 = Integer.parseInt(record.get(num).Position.substring(1));
+//				int k;
+//				switch(directions.get(directions.size()-1)) {
+//					case 0:
+//						num1++;
+//						break;
+//					case 1:
+//						num1--;
+//						break;
+//					case 2:
+//						k = holder2.transformPosition(letter1);
+//						k--;
+//						letter1 = holder2.transformIntToLetter(k);
+//						break;
+//					case 3:
+//						k = holder2.transformPosition(letter1);
+//						k++;
+//						letter1 = holder2.transformIntToLetter(k);
+//						break;
+//				}
+//				//System.out.println(record);
+//				action = aiAttack.get(findPos((letter1 + num1),aiAttack)).Position;
+//			}else{
+//				for(int i = 0; i < 4; i++) {
+//					if(findint(i,directions) != -1) {
+//						holderint.add(i);
+//					}
+//				}
+//				directions.add(holderint.get(random.nextInt(holderint.size())));
+//				String letter1 = record.get(0).Position.substring(0,1);
+//				int num1 = Integer.parseInt(record.get(0).Position.substring(1));
+//				int k;
+//				switch(directions.get(directions.size()-1)) {
+//					case 0:
+//						num1++;
+//						break;
+//					case 1:
+//						num1--;
+//						break;
+//					case 2:
+//						k = holder2.transformPosition(letter1);
+//						k--;
+//						letter1 = holder2.transformIntToLetter(k);
+//						break;
+//					case 3:
+//						k = holder2.transformPosition(letter1);
+//						k++;
+//						letter1 = holder2.transformIntToLetter(k);
+//						break;
+//				}
+//				//System.out.println(record);
+//				action = aiAttack.get(findPos((letter1 + num1),aiAttack)).Position;
+//			}
+			
+			
 		}else{
 			int num = random.nextInt(aiAttack.size());
 			action = aiAttack.get(num).Position;
@@ -149,7 +474,7 @@ public class Ai {
 	}
 	
 	//This is the constructor of the AI it will initialize all the variables.
-	public Ai(int level) {
+	public Ai(int level, String nam) {
 		aiBoard = new ArrayList<PlayerTile>();
 		aiAttack = new ArrayList<PlayerTile>();
 		PlayerTile holder = new PlayerTile("");
@@ -159,10 +484,19 @@ public class Ai {
 		//Calls the function to create the AI's ships.
 		createShips();
 		boatsLeft = 5;
-		record = new ArrayList<PlayerTile>();
+		//record = new ArrayList<PlayerTile>();
 		lowestBoat = 2;
 		PosHolder = "";
-		directions = new ArrayList<Integer>();
+		//directions = new ArrayList<Integer>();
+		switchedDirections = false;
+		attackedOnce= false;
+		memory = new ArrayList<ArrayList<PlayerTile>>();
+		directionmem = new ArrayList<ArrayList<Integer>>();
+		indexofAttack = -1;
+		name = nam;
+		actttion = "";
+		hello = new ArrayList<ArrayList<PlayerTile>>();
+		morethanonespace = new ArrayList<Boolean> ();
 	}
 	
 	//This function places the AI's ship in a random tile and direction.
@@ -285,6 +619,12 @@ public class Ai {
 		int previous = number;
 		boolean done = true;
 		int step = 0;
+		if(number == -1) {
+			System.out.println("How?");
+			System.out.println(name);
+			System.out.println(actttion);
+			System.out.println("Why?");
+			}
 		String pos = array.get(number).Position;
 		if(ships) {
 			//Based on the direction is given sets the number of steps needed to skip 

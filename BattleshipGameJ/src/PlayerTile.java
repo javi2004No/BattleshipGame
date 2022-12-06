@@ -123,6 +123,29 @@ public class PlayerTile {
 		return shipName;
 	}
 	
+	//Gets the size of either the ship the current tile has or the ship that you want.
+	public int GetSize(int ship) {
+		int size = 0;
+		switch(ship) {
+			case 1:
+				size = 2;
+				break;
+			case 2:
+			case 3:
+				size = 3;
+				break;
+			case 4:
+			case 5:	
+				size = ship;
+				break;
+		}
+		return size;
+	}
+	
+	public int GetSize() {
+		return GetSize(Ship);
+	}
+	
 	//A function that will take in an empty board and than add in all the 100 tiles.
 	public void createBoard(ArrayList<PlayerTile> board){
 		String paramanter = "";

@@ -18,7 +18,7 @@ public class Game {
 	//3 means hit, sunk, and won the game.
 	public int play(String action, ArrayList<PlayerTile> defender, int player) {
 		int result = 0;
-		Ai hold = new Ai(0);
+		Ai hold = new Ai(0,"");
 		int num = hold.findPos(action, defender);
 		if(defender.get(num).Ship > 0) {
 			if(player == 1) {
@@ -35,6 +35,8 @@ public class Game {
 						if(player1boats == 0) {
 							result = 3;
 						}
+					}else {
+						result = 1;
 					}
 				}
 			}else if(player == 2){
@@ -51,6 +53,8 @@ public class Game {
 						if(player2boats == 0) {
 							result = 3;
 						}
+					}else {
+						result = 1;
 					}
 				}
 			}

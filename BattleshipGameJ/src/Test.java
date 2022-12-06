@@ -65,15 +65,25 @@ public class Test {
 	public int testAi() {
 		//The AI class is being called here
 		//The number in the parentheses repersents its level I want to make diffrent AI with diffrent level of diffuculty to them.
-		Ai jeff = new Ai(1);
-		Ai bob = new Ai(1);
+		Ai jeff = new Ai(1,"Jeff");
+		Ai bob = new Ai(1,"Bob");
 		Scanner obj = new Scanner(System.in);
 		//Very simple just looks for and prints out where the AI ships are.
+		//System.out.println("Jeffs Ships");
 //		for(int i = 5; i > 0; i--) {
 //			System.out.println("Ship " + i);
 //			for(int d = 0; d < jeff.aiBoard.size(); d++) {
 //				if(jeff.aiBoard.get(d).Ship == i) {
 //					System.out.println(jeff.aiBoard.get(d).Position);
+//				}
+//			}
+//		}
+//		System.out.println("Bobs Ships");
+//		for(int i = 5; i > 0; i--) {
+//			System.out.println("Ship " + i);
+//			for(int d = 0; d < bob.aiBoard.size(); d++) {
+//				if(bob.aiBoard.get(d).Ship == i) {
+//					System.out.println(bob.aiBoard.get(d).Position);
 //				}
 //			}
 //		}
@@ -99,53 +109,53 @@ public class Test {
 //				break;
 //			}
 			if(turn == 0) {
-				System.out.println("Jeff");
+//				System.out.println("Jeff");
 				Attack = jeff.action();
-				//System.out.println("Jeff attacks: " + Attack);
-				result = game.play(Attack, bob.aiBoard,0);
+//				System.out.println("Jeff attacks: " + Attack);
+				result = game.play(Attack, bob.aiBoard,2);
 				switch(result) {
 					case 0:
 //						System.out.println("Jeff Misses");
-						jeff.cleanup(Attack, false, false);
+						jeff.cleanup(Attack, false, false, bob.aiBoard.get(bob.findPos(Attack, bob.aiBoard)).Ship);
 						break;
 					case 1:
 //						System.out.println("Jeff Hits");
-						jeff.cleanup(Attack, true, false);
+						jeff.cleanup(Attack, true, false, bob.aiBoard.get(bob.findPos(Attack, bob.aiBoard)).Ship);
 						break;
 					case 2:
 					case 3:
 //						System.out.println("Jeff Sinks Bobs " + bob.aiBoard.get(bob.findPos(Attack, bob.aiBoard)).getShip());
-						jeff.cleanup(Attack, true, true);
+						jeff.cleanup(Attack, true, true, bob.aiBoard.get(bob.findPos(Attack, bob.aiBoard)).Ship);
 						break;
 				}
 				if(result == 3) {
-				//	System.out.println("Jeff wins the Game!");
+//					System.out.println("Jeff wins the Game!");
 					break;
 				}
 //				jeff.cleanup(Attack, false, false);
 				turn++;
 			}else {
-				System.out.println("Bob");
+//				System.out.println("Bob");
 				Attack = bob.action();
-				//System.out.println("Bob attacks: " + Attack);
+//				System.out.println("Bob attacks: " + Attack);
 				result = game.play(Attack, jeff.aiBoard,1);
 				switch(result) {
 					case 0:
 //						System.out.println("Bob Misses");
-						bob.cleanup(Attack, false, false);
+						bob.cleanup(Attack, false, false, jeff.aiBoard.get(jeff.findPos(Attack, jeff.aiBoard)).Ship);
 						break;
 					case 1:
 //						System.out.println("Bob Hits");
-						bob.cleanup(Attack, true, false);
+						bob.cleanup(Attack, true, false, jeff.aiBoard.get(jeff.findPos(Attack, jeff.aiBoard)).Ship);
 						break;
 					case 2:
 					case 3:
 //						System.out.println("Bob Sinks Jeffs " + jeff.aiBoard.get(jeff.findPos(Attack, jeff.aiBoard)).getShip());
-						bob.cleanup(Attack, true, true);
+						bob.cleanup(Attack, true, true, jeff.aiBoard.get(jeff.findPos(Attack, jeff.aiBoard)).Ship);
 						break;
 				}
 				if(result == 3) {
-					//System.out.println("Bob wins the Game!");
+//					System.out.println("Bob wins the Game!");
 					break;
 				}
 //				bob.cleanup(Attack, false, false);
@@ -155,6 +165,7 @@ public class Test {
 		}
 		
 		//System.out.println("It took " + totalturns + " turns!");
+//		System.out.println("Game End");
 		return totalturns;
 	}
 	//This code calls the drawboard function which draws the board Rhodas is in charge of that.
