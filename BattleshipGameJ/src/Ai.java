@@ -474,29 +474,31 @@ public class Ai {
 	}
 	
 	//This is the constructor of the AI it will initialize all the variables.
-	public Ai(int level, String nam) {
-		aiBoard = new ArrayList<PlayerTile>();
-		aiAttack = new ArrayList<PlayerTile>();
-		PlayerTile holder = new PlayerTile("");
-		holder.createBoard(aiBoard);
-		holder.createBoard(aiAttack);
-		Level = level;
-		//Calls the function to create the AI's ships.
-		createShips();
-		boatsLeft = 5;
-		//record = new ArrayList<PlayerTile>();
-		lowestBoat = 2;
-		PosHolder = "";
-		//directions = new ArrayList<Integer>();
-		switchedDirections = false;
-		attackedOnce= false;
-		memory = new ArrayList<ArrayList<PlayerTile>>();
-		directionmem = new ArrayList<ArrayList<Integer>>();
-		indexofAttack = -1;
-		name = nam;
-		actttion = "";
-		hello = new ArrayList<ArrayList<PlayerTile>>();
-		morethanonespace = new ArrayList<Boolean> ();
+	public Ai(int level, String nam, boolean holde) {
+		if(!holde) {
+			aiBoard = new ArrayList<PlayerTile>();
+			aiAttack = new ArrayList<PlayerTile>();
+			PlayerTile holder = new PlayerTile("");
+			holder.createBoard(aiBoard);
+			holder.createBoard(aiAttack);
+			Level = level;
+			//Calls the function to create the AI's ships.
+			createShips();
+			boatsLeft = 5;
+			//record = new ArrayList<PlayerTile>();
+			lowestBoat = 2;
+			PosHolder = "";
+			//directions = new ArrayList<Integer>();
+			switchedDirections = false;
+			attackedOnce= false;
+			memory = new ArrayList<ArrayList<PlayerTile>>();
+			directionmem = new ArrayList<ArrayList<Integer>>();
+			indexofAttack = -1;
+			name = nam;
+			actttion = "";
+			hello = new ArrayList<ArrayList<PlayerTile>>();
+			morethanonespace = new ArrayList<Boolean> ();
+		}
 	}
 	
 	//This function places the AI's ship in a random tile and direction.
@@ -575,7 +577,7 @@ public class Ai {
 	//Return all possible permutations of directions the boats can fit in.
 	private ArrayList<PlayerTile> ship(int numberofTiles, int starter) {
 		//gets the index number of the position
-		int letter = starter/10;
+	//	int letter = starter/10;
 		ArrayList<PlayerTile> holder = new ArrayList<PlayerTile>();
 		//System.out.println(letter + " " + starter + " " + aiBoard.get(starter).Position);
 		//Adds any direction that fits to the holder list.
@@ -703,14 +705,14 @@ public class Ai {
 		return done;
 	}
 	
-	private int findint(int inte, ArrayList<Integer> array) {
-		for(int i = 0; i < array.size(); i++) {
-			if(array.get(i).equals(inte)) {
-				return i;
-			}
-		}
-		return -1;
-	}
+//	private int findint(int inte, ArrayList<Integer> array) {
+//		for(int i = 0; i < array.size(); i++) {
+//			if(array.get(i).equals(inte)) {
+//				return i;
+//			}
+//		}
+//		return -1;
+//	}
 	public int findPos(String pos, ArrayList<PlayerTile> board) {
 		for(int i = 0; i < board.size(); i++) {
 			if(board.get(i).Position.equals(pos)) {

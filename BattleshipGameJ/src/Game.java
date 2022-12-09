@@ -18,7 +18,7 @@ public class Game {
 	//3 means hit, sunk, and won the game.
 	public int play(String action, ArrayList<PlayerTile> defender, int player) {
 		int result = 0;
-		Ai hold = new Ai(0,"");
+		Ai hold = new Ai(0,"",true);
 		int num = hold.findPos(action, defender);
 		if(defender.get(num).Ship > 0) {
 			if(player == 1) {

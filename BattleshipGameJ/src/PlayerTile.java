@@ -12,14 +12,17 @@ public class PlayerTile {
 	//5 5-space ship(aircraft-carrier)
 	public int Ship;
 	//If the tile has been hit or not
-	public boolean BeenHit;
+	public int BeenHit;
 	//This is for the AI you dont need to worry about this.
 	public double chance;
 	//Sets everything to its defualt and takes the position from the function.
 	public PlayerTile(String position) {
 		Position = position;
 		Ship = 0;
-		BeenHit = false;
+		//0 not hit
+		//1 miss
+		//2 hit
+		BeenHit = 0;
 	}
 	//Transform the currosponding letter to its index number
 	public int transformPosition(String position) {
@@ -97,10 +100,9 @@ public class PlayerTile {
 		return output;
 	}
 	
-	//Gets the name of the ship of the current tile.
-	public String getShip() {
+	public String getShip(int ship) {
 		String shipName;
-		switch(Ship) {
+		switch(ship) {
 		  case 1:
 			  shipName = "destroyer";
 			  break;
@@ -121,6 +123,11 @@ public class PlayerTile {
 				  break;
 		}
 		return shipName;
+	}
+	
+	//Gets the name of the ship of the current tile.
+	public String getShip() {
+		return getShip(Ship);
 	}
 	
 	//Gets the size of either the ship the current tile has or the ship that you want.

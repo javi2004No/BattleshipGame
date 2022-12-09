@@ -65,8 +65,8 @@ public class Test {
 	public int testAi() {
 		//The AI class is being called here
 		//The number in the parentheses repersents its level I want to make diffrent AI with diffrent level of diffuculty to them.
-		Ai jeff = new Ai(1,"Jeff");
-		Ai bob = new Ai(1,"Bob");
+		Ai jeff = new Ai(1,"Jeff",false);
+		Ai bob = new Ai(1,"Bob",false);
 		Scanner obj = new Scanner(System.in);
 		//Very simple just looks for and prints out where the AI ships are.
 		//System.out.println("Jeffs Ships");
@@ -172,6 +172,183 @@ public class Test {
 	public void testBoard() {
 		Board_Code test = new Board_Code();
 		test.drawBoard();
+	}
+	
+	public void testTwoPlayer() {
+		Scanner input = new Scanner(System.in);
+		Ai holder = new Ai(1,"",true);
+		Player player1 = new Player();
+		Player player2 = new Player();
+		Game game = new Game();
+		System.out.println("Player 1 place your ships.");
+		for(int i = 5; i > 0; i--) {
+			System.out.println("PlayerBoard");
+			System.out.println("Place " + player1.playerBoard.get(0).getShip(i) + " (Size " + player1.playerBoard.get(0).GetSize(i) + ")");
+			boolean found = false;
+			while(!found) {
+				System.out.println("Start point: ");
+				String startPoint = input.nextLine();
+				System.out.println("End point: ");
+				String endPoint = input.nextLine();
+				if(player1.checkships(startPoint, endPoint, player1.playerBoard.get(0).GetSize(i),i)) {
+					found = true;
+					for(int z = 0; z < 50; z++) {
+						System.out.println();
+					}
+					System.out.println("Ship Added");
+				}
+			}
+		}
+		for(int z = 0; z < 50; z++) {
+			System.out.println();
+		}
+		System.out.println("Player 2 place your ships.");
+		for(int i = 5; i > 0; i--) {
+			System.out.println("PlayerBoard");
+			System.out.println("Place " + player2.playerBoard.get(0).getShip(i) + " (Size " + player2.playerBoard.get(0).GetSize(i) + ")");
+			boolean found = false;
+			while(!found) {
+				System.out.println("Start point: ");
+				String startPoint = input.nextLine();
+				System.out.println("End point: ");
+				String endPoint = input.nextLine();
+				if(player2.checkships(startPoint, endPoint, player2.playerBoard.get(0).GetSize(i),i)) {
+					found = true;
+					for(int z = 0; z < 50; z++) {
+						System.out.println();
+					}
+					System.out.println("Ship Added");
+				}
+			}
+		}
+		for(int z = 0; z < 50; z++) {
+			System.out.println();
+		}
+		int result;
+		boolean Game = true;
+		int turn = 0;
+		String previous = "";
+		int previousmove = -1;
+		while(Game) {
+			if(turn%2 == 0) {
+				if(turn != 0) {
+					System.out.println("Player 2 Attacked " + previous);
+					switch(previousmove) {
+					case 0:
+						System.out.println("Player 2 Missed");
+						break;
+					case 1:
+						System.out.println("Player 2 Hit");
+						break;
+					case 2:
+					case 3:
+						System.out.println("Player 2 Sunk Your " + player1.playerBoard.get(holder.findPos(previous, player1.playerBoard)).getShip());
+						break;
+				}
+				}
+				System.out.println("Player 1 turn");
+				System.out.println("AttackBoard");
+				System.out.println("PlayerBoard");
+				System.out.println("What is your Attack?");
+				boolean valid = false;
+				while(!valid) {
+					System.out.println("Attack:");
+					String Attack = input.nextLine();
+					if(player1.checkAttack(Attack)) {
+						System.out.println("Attacked " + Attack);
+						result = game.play(Attack, player2.playerBoard,2);
+						switch(result) {
+							case 0:
+								System.out.println("You Miss");
+								player1.cleanup(Attack, false);
+								break;
+							case 1:
+								System.out.println("You Hit");
+								player1.cleanup(Attack, true);
+								break;
+							case 2:
+							case 3:
+								System.out.println("You Sink Player 2's " + player2.playerBoard.get(holder.findPos(Attack, player2.playerBoard)).getShip());
+								player1.cleanup(Attack, true);
+								break;
+						}
+						if(result == 3) {
+							System.out.println("Congratulations you won!");
+							Game = false;
+						}else {
+							previous = Attack;
+							previousmove = result;
+						}
+						System.out.println("Press enter to continue");
+						input.nextLine();
+						valid = true;
+					}else {
+						System.out.println("Invalid attack");
+					}
+				}
+			}else {
+				if(turn != 0) {
+					System.out.println("Player 1 Attacked " + previous);
+					switch(previousmove) {
+					case 0:
+						System.out.println("Player 1 Missed");
+						break;
+					case 1:
+						System.out.println("Player 1 Hit");
+						break;
+					case 2:
+					case 3:
+						System.out.println("Player 1 Sunk Your " + player2.playerBoard.get(holder.findPos(previous, player2.playerBoard)).getShip());
+						break;
+				}
+				}
+				System.out.println("Player 2 turn");
+				System.out.println("AttackBoard");
+				System.out.println("PlayerBoard");
+				System.out.println("What is your Attack?");
+				boolean valid = false;
+				while(!valid) {
+					System.out.println("Attack:");
+					String Attack = input.nextLine();
+					if(player2.checkAttack(Attack)) {
+						System.out.println("Attacked " + Attack);
+						result = game.play(Attack, player1.playerBoard,1);
+						switch(result) {
+							case 0:
+								System.out.println("You Miss");
+								player2.cleanup(Attack, false);
+								break;
+							case 1:
+								System.out.println("You Hit");
+								player2.cleanup(Attack, true);
+								break;
+							case 2:
+							case 3:
+								System.out.println("You Sink Player 1's " + player1.playerBoard.get(holder.findPos(Attack, player1.playerBoard)).getShip());
+								player2.cleanup(Attack, true);
+								break;
+						}
+						if(result == 3) {
+							System.out.println("Congratulations you won!");
+							Game = false;
+						}else {
+							previous = Attack;
+							previousmove = result;
+						}
+						System.out.println("Press enter to continue");
+						input.nextLine();
+						valid = true;
+					}else {
+						System.out.println("Invalid attack");
+					}
+				}
+			}
+			turn++;
+			for(int z = 0; z < 50; z++) {
+				System.out.println();
+			}
+		}
+		//System.out.
 	}
 	
 	public void testClick() {
