@@ -15,6 +15,13 @@ public class PlayerTile {
 	public int BeenHit;
 	//This is for the AI you dont need to worry about this.
 	public double chance;
+	//Is it first, last, or in the middle.
+	//0 middle
+	//1 first
+	//2 last
+	public int where;
+	//Is it horizantal
+	public boolean horizantal;
 	//Sets everything to its defualt and takes the position from the function.
 	public PlayerTile(String position) {
 		Position = position;

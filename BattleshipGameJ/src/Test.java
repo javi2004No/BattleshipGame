@@ -182,7 +182,8 @@ public class Test {
 		Game game = new Game();
 		System.out.println("Player 1 place your ships.");
 		for(int i = 5; i > 0; i--) {
-			System.out.println("PlayerBoard");
+			System.out.println("YourBoard");
+			drawTable(player1.playerBoard,false);
 			System.out.println("Place " + player1.playerBoard.get(0).getShip(i) + " (Size " + player1.playerBoard.get(0).GetSize(i) + ")");
 			boolean found = false;
 			while(!found) {
@@ -204,7 +205,8 @@ public class Test {
 		}
 		System.out.println("Player 2 place your ships.");
 		for(int i = 5; i > 0; i--) {
-			System.out.println("PlayerBoard");
+			System.out.println("YourBoard");
+			drawTable(player2.playerBoard,false);
 			System.out.println("Place " + player2.playerBoard.get(0).getShip(i) + " (Size " + player2.playerBoard.get(0).GetSize(i) + ")");
 			boolean found = false;
 			while(!found) {
@@ -248,7 +250,9 @@ public class Test {
 				}
 				System.out.println("Player 1 turn");
 				System.out.println("AttackBoard");
+				drawTable(player1.playerAttack,true);
 				System.out.println("PlayerBoard");
+				drawTable(player1.playerBoard,false);
 				System.out.println("What is your Attack?");
 				boolean valid = false;
 				while(!valid) {
@@ -303,8 +307,10 @@ public class Test {
 				}
 				}
 				System.out.println("Player 2 turn");
-				System.out.println("AttackBoard");
-				System.out.println("PlayerBoard");
+				System.out.println("Your AttackBoard");
+				drawTable(player2.playerAttack,true);
+				System.out.println("Your Board");
+				drawTable(player2.playerBoard,false);
 				System.out.println("What is your Attack?");
 				boolean valid = false;
 				while(!valid) {
@@ -351,6 +357,278 @@ public class Test {
 		//System.out.
 	}
 	
+	public void testSinglePlayer() {
+		Scanner input = new Scanner(System.in);
+		Ai holder = new Ai(1,"",true);
+		Ai jeff = new Ai(1,"Jeff",false);
+		Player player1 = new Player();
+		Game game = new Game();
+		System.out.println("Player 1 place your ships.");
+		for(int i = 5; i > 0; i--) {
+			System.out.println("Your Board");
+			drawTable(player1.playerBoard,false);
+			System.out.println("Place " + player1.playerBoard.get(0).getShip(i) + " (Size " + player1.playerBoard.get(0).GetSize(i) + ")");
+			boolean found = false;
+			while(!found) {
+				System.out.println("Start point: ");
+				String startPoint = input.nextLine();
+				System.out.println("End point: ");
+				String endPoint = input.nextLine();
+				if(player1.checkships(startPoint, endPoint, player1.playerBoard.get(0).GetSize(i),i)) {
+					found = true;
+					for(int z = 0; z < 50; z++) {
+						System.out.println();
+					}
+					System.out.println("Ship Added");
+				}
+			}
+		}
+		for(int z = 0; z < 50; z++) {
+			System.out.println();
+		}
+		int result;
+		boolean Game = true;
+		int turn = 0;
+		String previous = "";
+		int previousmove = -1;
+		while(Game) {
+			if(turn%2 == 0) {
+				if(turn != 0) {
+					System.out.println("AI Attacked " + previous);
+					switch(previousmove) {
+					case 0:
+						System.out.println("AI Missed");
+						break;
+					case 1:
+						System.out.println("AI Hit");
+						break;
+					case 2:
+					case 3:
+						System.out.println("AI Sunk Your " + player1.playerBoard.get(holder.findPos(previous, player1.playerBoard)).getShip());
+						break;
+				}
+				}
+				System.out.println("Player 1 turn");
+				System.out.println("Your AttackBoard");
+				drawTable(player1.playerAttack,true);
+				System.out.println("Your Board");
+				drawTable(player1.playerBoard,false);
+				System.out.println("What is your Attack?");
+				boolean valid = false;
+				while(!valid) {
+					System.out.println("Attack:");
+					String Attack = input.nextLine();
+					if(player1.checkAttack(Attack)) {
+						System.out.println("Attacked " + Attack);
+						result = game.play(Attack, jeff.aiBoard,2);
+						switch(result) {
+							case 0:
+								System.out.println("You Miss");
+								player1.cleanup(Attack, false);
+								break;
+							case 1:
+								System.out.println("You Hit");
+								player1.cleanup(Attack, true);
+								break;
+							case 2:
+							case 3:
+								System.out.println("You Sink Player 2's " + jeff.aiBoard.get(holder.findPos(Attack, jeff.aiBoard)).getShip());
+								player1.cleanup(Attack, true);
+								break;
+						}
+						if(result == 3) {
+							System.out.println("Congratulations you won!");
+							Game = false;
+						}else {
+							previous = Attack;
+							previousmove = result;
+						}
+						System.out.println("Press enter to continue");
+						input.nextLine();
+						valid = true;
+					}else {
+						System.out.println("Invalid attack");
+					}
+				}
+			}else {
+				String Attack = jeff.action();
+				result = game.play(Attack, player1.playerBoard, 1);
+				switch(result) {
+					case 0:
+						jeff.cleanup(Attack, false, false,player1.playerBoard.get(holder.findPos(Attack, player1.playerBoard)).Ship );
+						break;
+					case 1:
+						jeff.cleanup(Attack, true, false,player1.playerBoard.get(holder.findPos(Attack, player1.playerBoard)).Ship );
+						break;
+					case 2:
+					case 3:
+						jeff.cleanup(Attack, true, true,player1.playerBoard.get(holder.findPos(Attack, player1.playerBoard)).Ship );
+						break;
+				}
+				if(result == 3) {
+					System.out.println("Unfourtainaly you lost");
+					Game = false;
+				}else {
+					previous = Attack;
+					previousmove = result;
+				}
+			}
+			turn++;
+			for(int z = 0; z < 50; z++) {
+				System.out.println();
+			}
+		}
+	}
+	
+	public void testArt() {
+//		System.out.println("\033[1m _");
+//		System.out.println("\033[1m|*|");
+//		System.out.println("\033[1m|*|");
+//		System.out.println("\033[1m|*|");
+//		System.out.println("\033[1m|\033[4m*\033[0m\033[1m|");
+//		System.out.println("\033[0m  \033[4m1\033[0m \033[4m2\033[0m \033[4m3\033[0m \033[4m4\033[0m \033[4m5\033[0m \033[4m6\033[0m \033[4m7\033[0m \033[4m8\033[0m \033[4m9\033[0m \033[4m10\033[0m\033[0m");
+//		System.out.println("A|");
+//		System.out.println("B|");
+//		System.out.println("C|");
+//		System.out.println("D|");
+//		System.out.println("E|");
+//		System.out.println("F|");
+//		System.out.println("G|");
+//		System.out.println("H|");
+//		System.out.println("I|");
+//		System.out.println("J|____________________");
+		Ai holder = new Ai(1,"",false);
+		drawTable(holder.aiBoard, false);
+	}
+	
+	private void drawTable(ArrayList<PlayerTile> board, boolean attack) {
+		Ai hold = new Ai(0,"",true);
+//		boolean previousexisted = false;
+//		System.out.println("\033[0m  \033[4m1\033[0m \033[4m2\033[0m \033[4m3\033[0m \033[4m4\033[0m \033[4m5\033[0m \033[4m6\033[0m \033[4m7\033[0m \033[4m8\033[0m \033[4m9\033[0m \033[4m10\033[0m\033[0m");
+//		for(int i = 0; i < 10; i++) {
+//			String letter = board.get(0).transformIntToLetter(i);
+//			int holdpos = hold.findPos(letter+"1", board);
+////			if(holdpos != -1) {
+////				if(board.get(holdpos).Ship != 0) {
+////					System.out.print(letter +"\033[4m\033[1m|\033[0m");
+////					previousexisted = true;
+////				}else {
+////					System.out.print(letter +"|");
+////				}
+////			}else {
+//				System.out.print(letter +"|");
+////			}
+//			for(int z = 1; z < 11; z++) {
+//				String pos = letter+z;
+//				int num = hold.findPos(pos, board);
+//				if(num > -1) {
+//					if(board.get(num).Ship > 0) {
+//						if(board.get(num).horizantal) {
+////							if(board.get(num).where == 1) {
+////								if(previousexisted) {
+////									System.out.print("\033[4m\033[1m* ");
+////								}else {
+////									System.out.print("\033[1m\033[4m|* ");
+////								}
+////							}else if(board.get(num).where == 2) {
+////								System.out.print("\033[4m\033[1m*|\033[0m ");
+////							}else {
+////								System.out.print("* ");
+////							}
+//						}else {
+//							
+//							if(board.get(num).where == 1) {
+//								if(previousexisted) {
+//									System.out.print("\033[1m*|\033[0m");
+//								}else {
+//									System.out.print("\033[1m|*|\033[0m");
+//								}
+//							}else if(board.get(num).where == 2) {
+//								System.out.print("\033[4m\033[1m|*|\033[0m");
+//							}else {
+//								System.out.print("\033[1m|*|\033[0m");
+//							}
+//						}
+//						//System.out.print("* ");
+//						previousexisted = true;
+//					}else {
+//						String posh = letter+(z+1);
+//						int numh = hold.findPos(posh, board);
+//						if(numh != -1) {
+//							if(board.get(numh).Ship != 0) {
+//								System.out.print(" ");
+//							}else {
+//								System.out.print("  ");
+//							}
+//						}else {
+//							System.out.print("  ");
+//						}
+//						previousexisted = false;
+//					}
+//				}else {
+//					String posh = letter+(z+1);
+//					int numh = hold.findPos(posh, board);
+//					if(numh != -1) {
+//						if(board.get(numh).Ship != 0) {
+//							System.out.print(" ");
+//						}else {
+//							System.out.print("  ");
+//						}
+//					}else {
+//						System.out.print("  ");
+//					}
+//					previousexisted = false;
+//				}
+//			}
+//			System.out.println();
+//		}
+//		System.out.println("Stop");
+		if(!attack) {
+			System.out.println("\033[0m  \033[4m1\033[0m \033[4m2\033[0m \033[4m3\033[0m \033[4m4\033[0m \033[4m5\033[0m \033[4m6\033[0m \033[4m7\033[0m \033[4m8\033[0m \033[4m9\033[0m \033[4m10\033[0m\033[0m");
+			for(int i = 0; i < 10; i++) {
+				String letter = board.get(0).transformIntToLetter(i);
+				System.out.print(letter+"|");
+				for(int z = 1; z < 11; z++) {
+					String pos = letter+z;
+					int num = hold.findPos(pos, board);
+					if(num > -1) {
+						if(board.get(num).Ship > 0) {
+							System.out.print("* ");
+						}else {
+							System.out.print("  ");
+						}
+					}else {
+						System.out.print("  ");
+					}
+				}
+				System.out.println();
+			}
+		}else {
+			System.out.println("\033[0m  \033[4m1\033[0m \033[4m2\033[0m \033[4m3\033[0m \033[4m4\033[0m \033[4m5\033[0m \033[4m6\033[0m \033[4m7\033[0m \033[4m8\033[0m \033[4m9\033[0m \033[4m10\033[0m\033[0m");
+			for(int i = 0; i < 10; i++) {
+				String letter = board.get(0).transformIntToLetter(i);
+				System.out.print(letter+"|");
+				for(int z = 1; z < 11; z++) {
+					String pos = letter+z;
+					int num = hold.findPos(pos, board);
+					if(num > -1) {
+						if(board.get(num).BeenHit == 1) {
+							System.out.print("* ");
+						}else if(board.get(num).BeenHit == 2) {
+							System.out.print("X ");
+						}else {
+							System.out.print("  ");
+						}
+					}else {
+						System.out.print("  ");
+					}
+				}
+				System.out.println();
+			}
+		}
+
+	}
+
 	public void testClick() {
 		
 	}

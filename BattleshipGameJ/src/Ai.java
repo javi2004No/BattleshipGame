@@ -545,20 +545,52 @@ public class Ai {
 					if(nnum < number) {
 						for(int i = nnum; i <= number; i+=10) {
 							aiBoard.get(i).Ship = currentShip;
+							aiBoard.get(i).horizantal = false;
+							if(i == nnum) {
+								aiBoard.get(i).where = 1;
+							}else if(i == number) {
+								aiBoard.get(i).where = 2;
+							}else {
+								aiBoard.get(i).where = 0;
+							}
 						}
 					}else if(nnum > number) {
 						for(int i = nnum; i >= number; i-=10) {
 							aiBoard.get(i).Ship = currentShip;
+							aiBoard.get(i).horizantal = false;
+							if(i == nnum) {
+								aiBoard.get(i).where = 2;
+							}else if(i == number) {
+								aiBoard.get(i).where = 1;
+							}else {
+								aiBoard.get(i).where = 0;
+							}
 						}
 					}
 				}else {
 					if(nnum < number) {
 						for(int i = nnum; i <= number; i++) {
 							aiBoard.get(i).Ship = currentShip;
+							aiBoard.get(i).horizantal = true;
+							if(i == nnum) {
+								aiBoard.get(i).where = 1;
+							}else if(i == number) {
+								aiBoard.get(i).where = 2;
+							}else {
+								aiBoard.get(i).where = 0;
+							}
 						}
 					}else if(nnum > number) {
 						for(int i = nnum; i >= number; i--) {
 							aiBoard.get(i).Ship = currentShip;
+							aiBoard.get(i).horizantal = true;
+							if(i == nnum) {
+								aiBoard.get(i).where = 2;
+							}else if(i == number) {
+								aiBoard.get(i).where = 1;
+							}else {
+								aiBoard.get(i).where = 0;
+							}
 						}
 					}
 				}
